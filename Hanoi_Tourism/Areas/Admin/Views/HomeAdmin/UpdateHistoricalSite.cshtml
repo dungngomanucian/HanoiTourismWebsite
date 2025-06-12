@@ -1,0 +1,67 @@
+﻿@model Hanoi_Tourism.Models.THistoricalSite
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "UpdateHistoricalSite";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>UpdateHistoricalSite</h1>
+
+<h4>THistoricalSite</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="UpdateHistoricalSite">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SiteId" />
+            <div class="form-group">
+                <label asp-for="StreetId" class="control-label"></label>
+                <select asp-for="StreetId" class="form-control" asp-items="ViewBag.StreetId"></select>
+                <span asp-validation-for="StreetId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OpeningHours" class="control-label"></label>
+                <input asp-for="OpeningHours" class="form-control" />
+                <span asp-validation-for="OpeningHours" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriceRange" class="control-label"></label>
+                <input asp-for="PriceRange" class="form-control" />
+                <span asp-validation-for="PriceRange" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Latitude" class="control-label"></label>
+                <input asp-for="Latitude" class="form-control" />
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Longitude" class="control-label"></label>
+                <input asp-for="Longitude" class="form-control" />
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ListHistoricalSite">Back to List</a>
+</div>
+

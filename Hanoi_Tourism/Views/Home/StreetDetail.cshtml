@@ -1,0 +1,398 @@
+﻿@{
+    ViewData["Title"] = "StreetDetail";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+@model Hanoi_Tourism.ViewModels.HomeStreetDetailViewModel
+<style>
+    p.truncate {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; /* hiển thị dấu ... khi văn bản bị cắt */
+        max-width: 50px; /* Điều chỉnh chiều rộng tối đa cần thiết */
+    }
+</style>
+
+<div class="container-fluid about py-0">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5">
+                <h1 class="mb-4">Welcome to <span class="text-primary">@Model.street.Name</span></h1>
+                <div class="h-100" style="border: 50px solid; border-color: transparent #13357B transparent #13357B;">
+                    <img src="@Url.Content("../LayoutIndex_Edit/images_Street/" + Model.streetImages[0].ImageUrl)" class="img-fluid w-100 h-100" alt="">
+                </div>
+            </div>
+            <div class="col-lg-7" style="background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .8)), url(../1LayoutTravel/img/about-img-1.png);">
+                <h5 class="section-about-title pe-3">About @Model.street.Name</h5>
+                <p class="mb-4" style="text-align: justify">@Model.street.Description</p>
+                @* <p class="mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium quos voluptatem suscipit neque enim, doloribus ipsum rem eos distinctio, dignissimos nisi saepe nulla? Libero numquam perferendis provident placeat molestiae quia?</p>
+                <div class="row gy-2 gx-4 mb-4">
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>First Class Flights</p>
+                </div>
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Handpicked Hotels</p>
+                </div>
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>5 Star Accommodations</p>
+                </div>
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Latest Model Vehicles</p>
+                </div>
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>150 Premium City Tours</p>
+                </div>
+                <div class="col-sm-6">
+                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>24/7 Service</p>
+                </div>
+                </div>
+                <a class="btn btn-primary rounded-pill py-3 px-5 mt-2" href="">Read More</a> *@
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Start -->
+<div class="container-fluid gallery py-0 my-0">
+    <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+        <h5 class="section-title px-3">Our Gallery</h5>
+        <h1 class="mb-4">@Model.street.Name Gallery.</h1>
+    </div>
+    <div class="tab-class text-center">
+        <div class="tab-content">
+            <div id="GalleryTab-1" class="tab-pane fade show p-0 active">
+                <div class="container">
+                    <!-- Thêm container -->
+                    <div class="row g-2 justify-content-center">
+                        <!-- Thêm justify-content-center -->
+                        @foreach (var item in Model.streetImages)
+                        {
+                            <div class="col-sm-6 col-md-6 col-lg-4 col-xl-2">
+                                <div class="gallery-item h-100">
+                                    <img src="@Url.Content("../LayoutIndex_Edit/images_Street/" + item.ImageUrl)" class="img-fluid w-100 h-100 rounded" alt="Image">
+                                    <div class="gallery-content">
+                                        <div class="gallery-info">
+                                            @* <h5 class="text-white text-uppercase mb-2">World Tour</h5>
+                                            <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a> *@
+                                        </div>
+                                    </div>
+                                    <div class="gallery-plus-icon">
+                                        <a href="@Url.Content("../LayoutIndex_Edit/images_Street/" + item.ImageUrl)" data-lightbox="gallery-1" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Gallery End -->
+<!-- Destination Start -->
+<div class="container-fluid destination py-0">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Destination</h5>
+            <h1 class="mb-0">Popular Destination</h1>
+        </div>
+        <div class="tab-class text-center">
+            <ul class="nav nav-pills d-inline-flex justify-content-center mb-5">
+                <li class="nav-item">
+                    <a class="d-flex mx-3 py-2 border border-primary bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-1">
+                        <span class="text-dark" style="width: 150px;">All</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex py-2 mx-3 border border-primary bg-light rounded-pill" data-bs-toggle="pill" href="#tab-2">
+                        <span class="text-dark" style="width: 150px;">Historical Sites</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex mx-3 py-2 border border-primary bg-light rounded-pill" data-bs-toggle="pill" href="#tab-3">
+                        <span class="text-dark" style="width: 150px;">Landmarks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex mx-3 py-2 border border-primary bg-light rounded-pill" data-bs-toggle="pill" href="#tab-4">
+                        <span class="text-dark" style="width: 150px;">Cultural Locations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex mx-3 py-2 border border-primary bg-light rounded-pill" data-bs-toggle="pill" href="#tab-5">
+                        <span class="text-dark" style="width: 150px;">Restaurants</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="container-fluid blog py-0">
+                <div class="row g-4 justify-content-center">
+                    @foreach (var item in Model.historicalSites)
+                    {
+                        <div class="col-lg-4 col-md-6 historical-site">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <div class="blog-img-inner">
+                                        @if (item.historicalSiteImages.Count() == 0)
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Site/" + "")" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Site/" + item.historicalSiteImages[0].ImageUrl)" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        <div class="blog-icon">
+                                            <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
+                                        @if (item.historicalSiteReviews.Count() == 0)
+                                        {
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>No reviews yet</small>
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>0 stars</a>
+                                        }
+                                        else
+                                        {
+                                            string dateTimeString = @item.historicalSiteReviews.Last().Date.ToString();
+                                            string[] parts = dateTimeString.Split(' ');
+                                            string datePart = parts[0];
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>@datePart</small>
+                                            float? starSum = 0;
+                                            foreach (var review in item.historicalSiteReviews)
+                                            {
+                                                starSum += review.Rating;
+                                            }
+                                            float? starAverage = starSum / item.historicalSiteReviews.Count();
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>@starAverage.ToString() stars</a>
+                                        }
+                                        <a href="#" class="btn-hover flex-fill text-center text-white py-2"><i class="fa fa-comments text-primary me-2"></i>@item.historicalSiteReviews.Count()</a>
+                                    </div>
+                                </div>
+                                <div class="blog-content border border-top-0 rounded-bottom p-4" style="height: 300px">
+                                    <p class="mb-3">Open: @item.historicalSite.OpeningHours</p>
+                                    <a href="#" class="h4 truncate">@item.historicalSite.Name</a>
+                                    <p class="my-3">@item.historicalSite.Address</p>
+                                    <a asp-controller="Home" asp-action="HistoricalSiteDetail" asp-route-hisID="@item.historicalSite.SiteId" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @foreach (var item in Model.landmarks)
+                    {
+                        <div class="col-lg-4 col-md-6 landmark">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <div class="blog-img-inner">
+                                        @if (item.landmarkImages.Count() == 0)
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Landmark/" + "")" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Landmark/" + item.landmarkImages[0].ImageUrl)" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        <div class="blog-icon">
+                                            <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
+                                        @if (item.landmarkReviews.Count() == 0)
+                                        {
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>No reviews yet</small>
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>0 stars</a>
+                                        }
+                                        else
+                                        {
+                                            string dateTimeString = @item.landmarkReviews.Last().Date.ToString();
+                                            string[] parts = dateTimeString.Split(' ');
+                                            string datePart = parts[0];
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>@datePart</small>
+                                            int? starSum = 0;
+                                            foreach (var review in item.landmarkReviews)
+                                            {
+                                                starSum += review.Rating;
+                                            }
+                                            float? starAverage = starSum / item.landmarkReviews.Count();
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>@starAverage.ToString() stars</a>
+                                        }
+                                        <a href="#" class="btn-hover flex-fill text-center text-white py-2"><i class="fa fa-comments text-primary me-2"></i>@item.landmarkReviews.Count()</a>
+                                    </div>
+                                </div>
+                                <div class="blog-content border border-top-0 rounded-bottom p-4" style="height: 300px">
+                                    <p class="mb-3">Open: @item.landmark.OpeningHours</p>
+                                    <a href="#" class="h4">@item.landmark.Name</a>
+                                    <p class="my-3">@item.landmark.Address</p>
+                                    <a asp-controller="Home" asp-action="LandmarkDetail" asp-route-landmarkID="@item.landmark.LandmarkId" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @foreach (var item in Model.culturalLocations)
+                    {
+                        <div class="col-lg-4 col-md-6 cultural-location">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <div class="blog-img-inner">
+                                        @if (item.culturalLocationImages.Count() == 0)
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_CulturalLocation/" + "")" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_CulturalLocation/" + item.culturalLocationImages[0].ImageUrl)" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        <div class="blog-icon">
+                                            <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
+                                        @if (item.culturalLocationReviews.Count() == 0)
+                                        {
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>No reviews yet</small>
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>0 stars</a>
+                                        }
+                                        else
+                                        {
+                                            string dateTimeString = @item.culturalLocationReviews.Last().Date.ToString();
+                                            string[] parts = dateTimeString.Split(' ');
+                                            string datePart = parts[0];
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>@datePart</small>
+                                            int? starSum = 0;
+                                            foreach (var review in item.culturalLocationReviews)
+                                            {
+                                                starSum += review.Rating;
+                                            }
+                                            float? starAverage = starSum / item.culturalLocationReviews.Count();
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>@starAverage.ToString() stars</a>
+                                        }
+                                        <a href="#" class="btn-hover flex-fill text-center text-white py-2"><i class="fa fa-comments text-primary me-2"></i>@item.culturalLocationReviews.Count()</a>
+                                    </div>
+                                </div>
+                                <div class="blog-content border border-top-0 rounded-bottom p-4" style="height: 300px">
+                                    <p class="mb-3">Open: @item.culturalLocation.OpeningHours</p>
+                                    <a href="#" class="h4">@item.culturalLocation.Name</a>
+                                    <p class="my-3">@item.culturalLocation.Address</p>
+                                    <a asp-controller="Home" asp-action="CulturalLocationDetail" asp-route-culID="@item.culturalLocation.LocationId" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @foreach (var item in Model.restaurants)
+                    {
+                        <div class="col-lg-4 col-md-6 restaurant">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <div class="blog-img-inner">
+                                        @if (item.restaurantImages.Count() == 0)
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Restaurant/" + "")" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_Restaurant/" + item.restaurantImages[0].ImageUrl)" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        <div class="blog-icon">
+                                            <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
+                                        @if (item.restaurantReviews.Count() == 0)
+                                        {
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>No reviews yet</small>
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>0 stars</a>
+                                        }
+                                        else
+                                        {
+                                            string dateTimeString = @item.restaurantReviews.Last().Date.ToString();
+                                            string[] parts = dateTimeString.Split(' ');
+                                            string datePart = parts[0];
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>@datePart</small>
+                                            int? starSum = 0;
+                                            foreach (var review in item.restaurantReviews)
+                                            {
+                                                starSum += review.Rating;
+                                            }
+                                            float? starAverage = starSum / item.restaurantReviews.Count();
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>@starAverage.ToString() stars</a>
+                                        }
+                                        <a href="#" class="btn-hover flex-fill text-center text-white py-2"><i class="fa fa-comments text-primary me-2"></i>@item.restaurantReviews.Count()</a>
+                                    </div>
+                                </div>
+                                <div class="blog-content border border-top-0 rounded-bottom p-4" style="height: 300px">
+                                    <p class="mb-3">Open: @item.restaurant.OpeningHours</p>
+                                    <a href="#" class="h4">@item.restaurant.Name</a>
+                                    <p class="my-3">@item.restaurant.Address</p>
+                                    <a asp-controller="Home" asp-action="RestaurantDetail" asp-route-resID="@item.restaurant.RestaurantId" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Destination End -->
+
+<script>
+    $(document).ready(function () {
+
+        // When a tab is clicked
+        $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+
+            // If the tab is "All"
+            if (target === "#tab-1") {
+                // Display all lists
+                $('.historical-site').show();
+                $('.landmark').show();
+                $('.cultural-location').show();
+                $('.restaurant').show();
+            }
+
+            // If the tab is "Historcal Sites"
+            else if (target == '#tab-2') {
+                // Hide other lists
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Historical Sites list
+                $('.historical-site').show();
+            }
+
+            // If the tab is "Landmark"
+            else if (target == '#tab-3') {
+                // Hide all the current items
+                $('.historical-site').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Landmarks list
+                $('.landmark').show();
+            }
+
+            // If the tab is "Cultural Locations"
+            else if (target == '#tab-4') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.restaurant').hide();
+                // Display Cultural Locations list
+                $('.cultural-location').show();
+            }
+
+            // If the tab is "Restaurants"
+            else if (target == '#tab-5') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                // Display Restaurants list
+                $('.restaurant').show();
+            }
+        });
+    });
+</script>
+
+

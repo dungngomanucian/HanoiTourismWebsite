@@ -1,0 +1,59 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Hanoi_Tourism.Models;
+
+@{
+    ViewData["Title"] = "ShowImages";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>@ViewBag.Name District</h1>
+<p>
+    <a asp-action="AddImages">Add new images</a>
+</p>
+<div class="image-container">
+        <div class="image-wrapper">
+            <img src="@Url.Content("../../LayoutIndex_Edit/images_District/"+ViewBag.ImgURL)" alt="District Image">
+            <i class="delete-icon fa fa-trash"></i>
+            <p>@ViewBag.ImgUrl</p>
+        </div>
+</div>
+
+<style>
+    .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between; /* Đảm bảo các ảnh sẽ căn lề trái và phải */
+    }
+
+        .image-container img {
+            width: 230px;
+            height: 230px;
+            margin-bottom: 10px; /* Đặt margin dưới cho mỗi ảnh */
+        }
+
+
+
+
+    .image-wrapper {
+        position: relative;
+        display: inline-block;
+        text-align: center; /* Căn giữa ảnh và biểu tượng */
+    }
+
+    .delete-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Để căn giữa biểu tượng */
+        color: #fff; /* Màu xám */
+        font-size: 50px; /* Phóng to biểu tượng */
+        opacity: 0.5; /* Làm mờ biểu tượng */
+        cursor: pointer; /* Thêm hiệu ứng con trỏ khi di chuột vào */
+        transition: opacity 0.3s ease; /* Hiệu ứng mờ */
+    }
+
+        .delete-icon:hover {
+            opacity: 1; /* Biểu tượng sẽ không còn mờ khi di chuột vào */
+        }
+
+</style>

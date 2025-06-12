@@ -1,0 +1,96 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Hanoi_Tourism.Models;
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<TCulturalLocation>
+@{
+    ViewData["Title"] = "ListCulturalLocation";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Category Cultural Location</h1>
+
+<p>
+    <a asp-action="AddCulturalLocation">Create New</a>
+</p>
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Address
+            </th>
+            
+            <th>
+                OpeningHours
+            </th>
+            <th>
+                PriceRange
+            </th>
+            <th>
+               Latitude
+            </th>
+            <th>
+                Longitude
+            </th>
+            
+            
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OpeningHours)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PriceRange)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Latitude)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Longitude)
+            </td>
+          
+            <td>
+                    <a asp-action="UpdateCulturalLocation" asp-route-clId="@item.LocationId">Edit</a> |
+                    <a asp-action="ShowImagesCulturalLocation" asp-route-clId="@item.LocationId">Images</a> |
+                    
+                    <a href="#" onclick="confirmDelete('@Url.Action("DeleteCulturalLocation", "HomeAdmin", new { culId = item.LocationId })')">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<div class=".pagination btn-group me-2" role="group" aria-label="First group">
+    @Html.PagedListPager(Model,
+    page => Url.Action("ListCulturalLocationn", new { page = page }),
+    new X.PagedList.Web.Common.PagedListRenderOptions
+    {
+    UlElementClasses = new[] { "pagination" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link", "btn", "btn-info" }
+    })
+
+</div>
+<script>
+    function confirmDelete(deleteUrl) {
+        if (confirm("Bạn có chắc chắn muốn xóa?")) {
+            window.location.href = deleteUrl;
+        }
+    }
+</script>

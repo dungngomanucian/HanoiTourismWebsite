@@ -1,0 +1,152 @@
+﻿@model Hanoi_Tourism.Models.TUser
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+    <meta name="author" content="AdminKit">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+
+    <link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-up.html" />
+
+    <title>Hanoi Tourism IT2</title>
+    <link rel="icon" href="../LayoutIndex_Edit/favicon/favicon.ico" type="image/x-icon" />
+
+    <link href="../../LayoutAdmin/css/app.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+
+
+        <main class="d-flex w-100">
+            <div class="container d-flex flex-column">
+                <div class="row vh-100">
+                    <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                        <div class="d-table-cell align-middle">
+
+                            <div class="text-center mt-4">
+
+                                <p class="lead">
+                                    Sign up
+                                </p>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="m-sm-4">
+                                        <form method="post" asp-action="Register" onsubmit="return validateForm()">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <div class="form-group">
+                                                <label asp-for="Name" class="form-label"></label>
+                                                <input id="name" asp-for="Name" class="form-control form-control-lg" type="text" name="name" placeholder="Enter your name" />
+                                                <span id="name-error" class="text-danger"></span>
+                                                <span asp-validation-for="Name" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Email" class="form-label"></label>
+                                                <input id="email" asp-for="Email" class="form-control form-control-lg" type="text" name="email" placeholder="Enter your email" />
+                                                <span id="email-error" class="text-danger"></span>
+                                                <span asp-validation-for="Email" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="Password" class="form-label"></label>
+                                                <input id="password" asp-for="Password" class="form-control form-control-lg" type="password" name="password" placeholder="Enter your password" />
+                                                <span id="password-error" class="text-danger"></span>
+                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                                <input id="confirmPassword" asp-for="ConfirmPassword" class="form-control form-control-lg" type="password" name="confirmPassword" placeholder="Confirm your password" />
+                                                <span id="confirmPassword-error" class="text-danger"></span>
+                                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                            </div>
+                                            <div class="text-center mt-3 form-group">
+                                                <input type="submit" value="Sign up" class="btn btn-lg btn-primary"></input>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+
+
+</body>
+</html>
+<script>
+var regex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+function validateEmail(email) {
+    return regex.test(email);
+}
+
+function validateForm() {
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+
+    var nameError = document.getElementById('name-error');
+    var emailError = document.getElementById('email-error');
+    var passwordError = document.getElementById('password-error');
+    var confirmPasswordError = document.getElementById('confirmPassword-error');
+
+    // Xóa thông báo lỗi trước khi kiểm tra lại
+    nameError.innerText = '';
+    emailError.innerText = '';
+    passwordError.innerText = '';
+    confirmPasswordError.innerText = '';
+
+    if (name.trim() === '') {
+            nameError.innerText = 'Please enter a username';
+            return false; // Ngăn chặn việc gửi form nếu có lỗi
+    }
+    // Kiểm tra email
+    if (email.trim() !== '' && !validateEmail(email)) {
+        emailError.innerText = 'Please enter a valid email address.';
+        return false; // Ngăn chặn việc gửi form nếu có lỗi
+    }
+
+    // Kiểm tra password
+    if (password.trim() === '') {
+        passwordError.innerText = 'Please enter your password.';
+        return false; // Ngăn chặn việc gửi form nếu có lỗi
+    }
+
+    // Kiểm tra confirmPassword
+        if (confirmPassword.trim() === '') {
+        confirmPasswordError.innerText = 'Please confirm your password.';
+        return false; // Ngăn chặn việc gửi form nếu có lỗi
+    }
+
+    // Kiểm tra mật khẩu và xác nhận mật khẩu có giống nhau không
+    if (password !== confirmPassword) {
+        confirmPasswordError.innerText = 'The password and confirmation password do not match.';
+        return false; // Ngăn chặn việc gửi form nếu có lỗi
+    }
+
+    // Nếu không có lỗi, cho phép gửi form
+    return true;
+}
+
+
+</script>

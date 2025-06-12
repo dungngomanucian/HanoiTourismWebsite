@@ -1,0 +1,1179 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+@using Hanoi_Tourism.ViewModels
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<HomeStreetListViewModel>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css" />
+
+<style>
+    #info-overlay::-webkit-scrollbar {
+        display: none;
+    }
+
+    #info-overlay {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    #getLocationBtn, #toggleBtn {
+        display: inline-block;
+        outline: none;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        border-radius: 500px;
+        transition-property: background-color,border-color,color,box-shadow,filter;
+        transition-duration: .3s;
+        border: 1px solid transparent;
+        letter-spacing: 2px;
+        min-width: 160px;
+        text-transform: uppercase;
+        white-space: normal;
+        font-weight: 700;
+        text-align: center;
+        padding: 16px 14px 18px;
+        color: #ff8375;
+        box-shadow: inset 0 0 0 2px #ff8375;
+        background-color: transparent;
+        height: 48px;
+    }
+
+        #getLocationBtn:hover {
+            color: #fff;
+            background-color: #ff8375;
+        }
+
+        #toggleBtn:hover {
+            color: #fff;
+            background-color: #ff8375;
+        }
+
+    .button_location {
+        text-align: center;
+    }
+
+    #marker_instruction table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    @@keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+        }
+    }
+
+    #instruction {
+        display: flex;
+        margin: auto;
+    }
+
+    #marker_instruction, #user_marker {
+        flex: 1;
+    }
+
+    /* Media query cho màn hình laptop trở xuống */
+    @@media screen and (min-width: 601px) and (max-width: 1000px) {
+        #instruction {
+            flex-direction: column;
+            width: auto;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #marker_instruction, #user_marker {
+            width: 80%;
+            padding: 10px;
+        }
+    }
+
+    @@media screen and (max-width: 600px) {
+        #user_marker {
+            width: 35%;
+        }
+
+        #getLocationBtn, #toggleBtn {
+            font-size: 11px;
+            padding: 12px 10px 14px;
+            min-width: auto;
+        }
+
+        .button_location a {
+            margin-right: 10px;
+            margin-left: 18px
+        }
+
+        #instruction {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        #marker_instruction {
+            display: none;
+        }
+    }
+
+
+    #marker_instruction table td {
+        text-align: left;
+        padding: 10px;
+        font-size: 17px;
+        font-weight: 400;
+        font-family: 'Roboto', sans-serif;
+    }
+
+        #marker_instruction table td img {
+            width: 30px; /* Đặt chiều rộng mong muốn */
+            height: auto; /* Chiều cao sẽ tự động điều chỉnh để giữ tỷ lệ khung hình */
+        }
+
+    #marker_instruction table .Restaurant:hover {
+        background-color: #6bcbff;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    #marker_instruction table .CuturalLocation:hover {
+        background-color: #f3ff9e;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    #marker_instruction table .HistoricalSite:hover {
+        background-color: #afff9b;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    #marker_instruction table .Landmark:hover {
+        background-color: #ffbe63;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    .marker-img {
+        width: 30px; /* Đặt chiều rộng mong muốn */
+        height: auto; /* Chiều cao sẽ tự động điều chỉnh để giữ tỷ lệ khung hình */
+    }
+
+    /* Ẩn overlayhalf và hiển thị overlayfull khi màn hình nhỏ hơn hoặc bằng 768px */
+    .overlayhalf {
+        display: block;
+    }
+
+    .overlayfull {
+        display: none;
+    }
+
+    @@media (max-width: 800px) {
+        .overlayhalf {
+            display: none;
+        }
+
+        .overlayfull {
+            display: block;
+        }
+    }
+
+</style>
+
+<!-- Attraction Start -->
+<div class="container-fluid ExploreTour py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Explore Hanoi</h5>
+            <h1 class="mb-4">Tourist Attractions</h1>
+            <p class="mb-0">
+                Hanoi, Vietnam's capital, is a captivating blend of tradition and modernity, drawing visitors with its rich cultural heritage and diverse tourist attractions. Essentially, this city is an immersive cultural journey, where every street, monument, and flavor reflects Vietnam's enduring spirit and heritage.
+            </p>
+        </div>
+        @Html.Partial("Attraction")
+
+    </div>
+</div>
+<!-- Attraction End -->
+<div id="instruction" style="display: flex; width: 130vh; margin: auto">
+    <div id="marker_instruction" style="flex: 1;">
+        <!-- Bảng giải thích marker -->
+        <table>
+            <tr>
+                <td class="Restaurant"><img src="@Url.Content("../Marker_images/RestaurantPin.png")" alt="Marker Restaurant"></td>
+                <td class="Restaurant mb-0">This marker indicates a restaurant</td>
+            </tr>
+            <tr>
+                <td class="CuturalLocation"><img src="@Url.Content("../Marker_images/CuturalLocationPin.png")" alt="Marker Cultural Location"></td>
+                <td class="CuturalLocation mb-0">This marker indicates a cultural location</td>
+            </tr>
+            <tr>
+                <td class="HistoricalSite"><img src="@Url.Content("../Marker_images/HistoricalSitePin.png")" alt="Marker Historical Site"></td>
+                <td class="HistoricalSite mb-0">This marker indicates a historical site</td>
+            </tr>
+            <tr>
+                <td class="Landmark"><img src="@Url.Content("../Marker_images/LandmarkPin.png")" alt="Marker Landmark"></td>
+                <td class="Landmark mb-0">This marker indicates a landmark</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="user_marker" style="flex: 1;">
+        <table style="height: 50%; width: 100%">
+            <tr>
+                <td id="img-location" style="text-align: center; padding-bottom: 10px;"><img src="@Url.Content("../Marker_images/UserLocationPin.png")" style="width: 100px; height: 100px;" alt="Your Location"></td>
+                <td class="mb-0" id="text-location" style="text-align: left;">Your Location</td>
+            </tr>
+        </table>
+        <div class="button_location" style="padding-top: 34px; display: flex;">
+            <a href="#displayRestaurants" style="margin-right: 20px;"><button id="getLocationBtn" style="padding: 0px 10px">Get Nearby Locations</button></a>
+            <a href="#map"><button id="toggleBtn" style="padding: 0px 10px">Change Type of Map</button></a>
+        </div>
+    </div>
+</div>
+<div class="container-fluid search-bar position-relative" style="margin: 20px 0px;">
+    <div class="container">
+        <div class="position-relative rounded-pill w-100 mx-auto" style="border: 1px solid #111">
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new {id = "formAttraction"}))
+            {
+                <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" id="txtAttraction" name="AttractionName" placeholder="Search for an Attraction">
+                <input type="hidden" id="hfAttraction" name="AttractionId" />
+                <a href="#map"><button type="submit" class="btn btn-primary rounded-pill py-2 px-4 position-absolute me-2" style="top: 50%; right: 10px; transform: translateY(-50%);">Search</button></a>
+            }
+        </div>
+    </div>
+</div>
+<div id="errorMessageMap" class="text-danger" style="display:none; text-align:center"></div>
+<div id="displayRestaurants" style="height:600px; width: 100%; position: relative;">
+    <div id="map" style="position: absolute; top: 0; height: 100%; width: 100%;"></div>
+    <div id="info-overlay" class="overlayhalf" style="position: absolute; left: 0; top: 0; width: 30%; height: 100%; overflow: auto; background-color: rgba(255, 255, 255, 0.8);">
+    </div>
+</div>
+<div id="info-overlayfull" class="overlayfull" style="width: 100%; height: 500px; overflow: auto; margin-top: 20px; background-color: rgba(255, 255, 255, 0.8);">
+</div>
+
+<!-- List Top Location Start -->
+<div class="container-fluid packages py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Restaurants</h5>
+            <h1 class="mb-0">10 Most-reviewed Dining Spots</h1>
+        </div>
+        @Html.Partial("TopRestaurant")
+    </div>
+</div>
+<div class="container-fluid packages py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Historical Sites</h5>
+            <h1 class="mb-0">6 Top-reviewed Historic Attractions</h1>
+        </div>
+        @Html.Partial("TopHistoricalSite")
+    </div>
+</div>
+<div class="container-fluid packages py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Landmarks</h5>
+            <h1 class="mb-0">8 Most-rating Signature Structures</h1>
+        </div>
+        @Html.Partial("TopLandmark")
+    </div>
+</div>
+<div class="container-fluid packages py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Cultural Locations</h5>
+            <h1 class="mb-0">9 Top-rating Cultural Venues</h1>
+        </div>
+        @Html.Partial("TopCulturalLocation")
+    </div>
+</div>
+<!-- List Top Location End -->
+<!-- Gallery Start -->
+<div class="container-fluid gallery py-5 my-5">
+    <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+        <h5 class="section-title px-3">Hanoi 's Gallery</h5>
+        <h1 class="mb-4">Peaceful City snapshots</h1>
+        <p class="mb-0">
+            These images capture tranquil moments amidst the hustle and bustle of city existence. Each snapshot evokes a sense of calmness, inviting viewers to pause and appreciate the beauty of urban tranquility.
+        </p>
+    </div>
+    <div class="tab-class text-center">
+        <div class="tab-content">
+            <div id="GalleryTab-1" class="tab-pane fade show p-0 active">
+                <div class="row g-2">
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot1.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot1.jpg" data-lightbox="gallery-1" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot2.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot2.jpg" data-lightbox="gallery-2" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot3.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot3.jpg" data-lightbox="gallery-3" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot4.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot4.jpg" data-lightbox="gallery-4" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot5.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot5.jpg" data-lightbox="gallery-5" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot6.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot6.jpg" data-lightbox="gallery-6" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot7.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot7.jpg" data-lightbox="gallery-7" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot8.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot8.jpg" data-lightbox="gallery-8" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot9.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot9.jpg" data-lightbox="gallery-9" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3 col-xl-2">
+                        <div class="gallery-item h-100">
+                            <img src="../LayoutIndex_Edit/images_Snapshot/snapshot10.jpg" class="img-fluid w-100 h-100 rounded" alt="Image">
+                            <div class="gallery-content">
+                                <div class="gallery-info">
+                                </div>
+                            </div>
+                            <div class="gallery-plus-icon">
+                                <a href="../LayoutIndex_Edit/images_Snapshot/snapshot10.jpg" data-lightbox="gallery-10" class="my-auto"><i class="fas fa-plus fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Gallery End -->
+<!-- Team Member Start -->
+<div class="container-fluid guide py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Team Members</h5>
+            <h1 class="mb-0">Meet Our Mates</h1>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-2.4 col-lg-2">
+                <div class="guide-item">
+                    <div class="guide-img">
+                        <div class="guide-img-efects">
+                            <img src="../LayoutIndex_Edit/teamMembers/ava1.jpg" class="img-fluid w-100 rounded-top" alt="Image" style="overflow: hidden">
+                        </div>
+                        <div class="guide-icon rounded-pill p-2">
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="guide-title text-center rounded-bottom p-4">
+                        <div class="guide-title-inner">
+                            <h4 class="mt-3">Dung</h4>
+                            <p class="mb-0">Ngo Viet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2.4 col-lg-2">
+                <div class="guide-item">
+                    <div class="guide-img">
+                        <div class="guide-img-efects">
+                            <img src="../LayoutIndex_Edit/teamMembers/ava2.jpg" class="img-fluid w-100 rounded-top" alt="Image" style="width: 100%; height: auto">
+                        </div>
+                        <div class="guide-icon rounded-pill p-2">
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="guide-title text-center rounded-bottom p-4">
+                        <div class="guide-title-inner">
+                            <h4 class="mt-3">Khanh</h4>
+                            <p class="mb-0">Vu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2.4 col-lg-2">
+                <div class="guide-item">
+                    <div class="guide-img">
+                        <div class="guide-img-efects">
+                            <img src="../LayoutIndex_Edit/teamMembers/ava3.jpg" class="img-fluid w-100 rounded-top" alt="Image">
+                        </div>
+                        <div class="guide-icon rounded-pill p-2">
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="guide-title text-center rounded-bottom p-4">
+                        <div class="guide-title-inner">
+                            <h4 class="mt-3">Quyet</h4>
+                            <p class="mb-0">Kieu Kien</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2.4 col-lg-2">
+                <div class="guide-item">
+                    <div class="guide-img">
+                        <div class="guide-img-efects">
+                            <img src="../LayoutIndex_Edit/teamMembers/ava4.jpg" class="img-fluid w-100 rounded-top" alt="Image">
+                        </div>
+                        <div class="guide-icon rounded-pill p-2">
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="guide-title text-center rounded-bottom p-4">
+                        <div class="guide-title-inner">
+                            <h4 class="mt-3">Thinh</h4>
+                            <p class="mb-0">Do Duc</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2.4 col-lg-2">
+                <div class="guide-item">
+                    <div class="guide-img">
+                        <div class="guide-img-efects">
+                            <img src="../LayoutIndex_Edit/teamMembers/ava5.jpg" class="img-fluid w-100 rounded-top" alt="Image">
+                        </div>
+                        <div class="guide-icon rounded-pill p-2">
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="guide-title text-center rounded-bottom p-4">
+                        <div class="guide-title-inner">
+                            <h4 class="mt-3">Vinh</h4>
+                            <p class="mb-0">Tran Ha</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Team Member End -->
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic292aWV0cGxnNjEyIiwiYSI6ImNsdWFqYzR4ejBsM2Uyc2xkaHYzYzVsOXMifQ.tDjyjf6lgxEemlMnyHy_XA';
+
+    var mapStyles = [
+        'mapbox://styles/mapbox/streets-v12', // Bản đồ đường phố
+        'mapbox://styles/mapbox/satellite-v9', // Bản đồ vệ tinh
+        'mapbox://styles/mapbox/navigation-day-v1', //Bản đồ chỉ đường vào ban ngày
+        'mapbox://styles/mapbox/navigation-night-v1' //Bản đồ chỉ đường vào ban đêm
+    ];
+    var currentStyle = 0;
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: mapStyles[currentStyle],
+        center: [105.8129427956349, 21.03204802005805],
+        zoom: 13,
+        scrollZoom: false
+    });
+
+    document.getElementById('toggleBtn').addEventListener('click', function () {
+        // Tăng chỉ số của dạng bản đồ hiện tại hoặc quay lại 0 nếu đã ở dạng bản đồ cuối cùng
+        currentStyle = (currentStyle + 1) % mapStyles.length;
+
+        // Cập nhật bản đồ với dạng bản đồ mới
+        map.setStyle(mapStyles[currentStyle]);
+    });
+
+
+    // Thêm sự kiện click cho nút "getLocationBtn"
+    document.getElementById('getLocationBtn').addEventListener('click', function () {
+        if (navigator.geolocation) {
+            // Sử dụng Geolocation API để lấy vị trí hiện tại của người dùng
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                // Tạo marker mới tại vị trí của người dùng
+                var userLocationMarker = new mapboxgl.Marker({
+                    color: "red" // Màu của Marker là đỏ
+                }).setLngLat([longitude, latitude]).addTo(map);
+
+                // Tạo vùng bao quanh marker với bán kính 5 kilomet ban đầu
+                var circleLayer = {
+                    'id': 'circle-layer',
+                    'type': 'circle',
+                    'source': {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'Feature',
+                            'properties': {},
+                            'geometry': {
+                                'type': 'Point',
+                                'coordinates': [longitude, latitude]
+                            }
+                        }
+                    },
+                    'paint': {
+                        'circle-radius': 700, // Bán kính của vòng tròn là 5 kilomet
+                        'circle-color': '#FFC0CB', // Màu của vòng tròn
+                        'circle-opacity': 0.35, // Độ trong suốt của vòng tròn
+                        'circle-stroke-color': '#FFC0CB', // Màu của đường viền vòng tròn
+                        'circle-stroke-opacity': 0.8, // Độ trong suốt của đường viền vòng tròn
+                        'circle-stroke-width': 2 // Độ dày của đường viền vòng tròn
+                    }
+                };
+
+                // Thêm vùng bao quanh marker vào bản đồ
+                map.addLayer(circleLayer);
+
+                restaurants.forEach(function (restaurantDetail) {
+                    var marker = document.querySelector(`[data-id="${restaurantDetail.id}"]`);
+                    var id = marker.dataset.id;
+                    var lng = parseFloat(marker.dataset.lng);
+                    var lat = parseFloat(marker.dataset.lat);
+
+                    var markerLngLatObj = new mapboxgl.LngLat(lng, lat);
+                    var distance = markerLngLatObj.distanceTo(new mapboxgl.LngLat(longitude, latitude));
+
+                    if (distance <= circleLayer.paint['circle-radius']) {
+                        setInterval(() => {
+                            marker.style.animation = "fadeOut 0.5s forwards";
+                            setTimeout(() => {
+                                marker.style.animation = "";
+                            }, 500);
+                        }, 5000);
+                    }
+                });
+
+                historicalSites.forEach(function (historicalSiteDetail) {
+                    var marker = document.querySelector(`[data-id="${historicalSiteDetail.id}"]`);
+                    var id = marker.dataset.id;
+                    var lng = parseFloat(marker.dataset.lng);
+                    var lat = parseFloat(marker.dataset.lat);
+
+                    var markerLngLatObj = new mapboxgl.LngLat(lng, lat);
+                    var distance = markerLngLatObj.distanceTo(new mapboxgl.LngLat(longitude, latitude));
+
+                    if (distance <= circleLayer.paint['circle-radius']) {
+                        setInterval(() => {
+                            marker.style.animation = "fadeOut 0.5s forwards";
+                            setTimeout(() => {
+                                marker.style.animation = "";
+                            }, 500);
+                        }, 5000);
+                    }
+                });
+
+                landMarks.forEach(function (landMarkDetail) {
+                    var marker = document.querySelector(`[data-id="${landMarkDetail.id}"]`);
+                    var id = marker.dataset.id;
+                    var lng = parseFloat(marker.dataset.lng);
+                    var lat = parseFloat(marker.dataset.lat);
+
+                    var markerLngLatObj = new mapboxgl.LngLat(lng, lat);
+                    var distance = markerLngLatObj.distanceTo(new mapboxgl.LngLat(longitude, latitude));
+
+                    if (distance <= circleLayer.paint['circle-radius']) {
+                        setInterval(() => {
+                            marker.style.animation = "fadeOut 0.5s forwards";
+                            setTimeout(() => {
+                                marker.style.animation = "";
+                            }, 500);
+                        }, 5000);
+                    }
+                });
+
+                culturalLocations.forEach(function (culturalLocationDetail) {
+                    var marker = document.querySelector(`[data-id="${culturalLocationDetail.id}"]`);
+                    var id = marker.dataset.id;
+                    var lng = parseFloat(marker.dataset.lng);
+                    var lat = parseFloat(marker.dataset.lat);
+
+                    var markerLngLatObj = new mapboxgl.LngLat(lng, lat);
+                    var distance = markerLngLatObj.distanceTo(new mapboxgl.LngLat(longitude, latitude));
+
+                    if (distance <= circleLayer.paint['circle-radius']) {
+                        setInterval(() => {
+                            marker.style.animation = "fadeOut 0.5s forwards";
+                            setTimeout(() => {
+                                marker.style.animation = "";
+                            }, 500);
+                        }, 5000);
+                    }
+                });
+
+
+                // Zoom vào vị trí của người dùng
+                map.flyTo({
+                    center: [longitude, latitude],
+                    zoom: 15 // Zoom level bạn muốn áp dụng khi nhấn nút
+                });
+            });
+
+            // Thêm sự kiện zoomend để tính toán lại bán kính của vòng tròn khi zoom xảy ra
+            map.on('zoomend', function () {
+                var zoomLevel = map.getZoom();
+                var earthCircumference = 40075017; // Chu vi trái đất trong mét
+                var circleRadiusInMeters = 100000000 / (earthCircumference / Math.pow(2, zoomLevel) * 256);
+
+                // Cập nhật bán kính của vòng tròn
+                map.setPaintProperty('circle-layer', 'circle-radius', circleRadiusInMeters);
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
+    });
+
+    //Restaurant
+    var restaurants = [];
+
+    @foreach (var restaurant in Model[0].restaurantDetails)
+    {
+        <text>
+                var restaurantDetail = {
+            id: '@restaurant.restaurantDetail.RestaurantId',
+            coordinates: [@restaurant.restaurantDetail.Longitude, @restaurant.restaurantDetail.Latitude]
+        };
+        restaurants.push(restaurantDetail);
+        </text>
+    }
+
+        restaurants.forEach(function (restaurantDetail) {
+            // Tạo một phần tử div để chứa hình ảnh và thông tin
+            var customMarkerElement = document.createElement('div');
+            customMarkerElement.className = 'custom-marker';
+
+            var lng = restaurantDetail.coordinates[0];
+            var lat = restaurantDetail.coordinates[1];
+
+            // Thiết lập thuộc tính data-id, data-lng và data-lat cho customMarkerElement
+            customMarkerElement.setAttribute('data-id', restaurantDetail.id);
+            customMarkerElement.setAttribute('data-lng', lng);
+            customMarkerElement.setAttribute('data-lat', lat);
+
+            // Tạo một phần tử hình ảnh và thêm vào customMarkerElement
+            var imgElement = document.createElement('img');
+            imgElement.src = '../Marker_images/RestaurantPin.png'; // Thay đổi đường dẫn này thành đường dẫn thực tế của bạn
+            imgElement.className = 'marker-img';
+            customMarkerElement.appendChild(imgElement);
+
+            // Tạo marker với customMarkerElement
+            var marker = new mapboxgl.Marker(customMarkerElement)
+                .setLngLat([lng, lat])
+                .addTo(map);
+
+            // Chọn customMarkerElement bất kỳ trong restaurant
+            customMarkerElement.addEventListener('click', function () {
+                var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/restaurantapi/" + restaurantDetail.id;
+                showRestaurantByLatitudeAndLongtitude(getUrl);
+            });
+        });
+
+
+
+    function showRestaurantByLatitudeAndLongtitude(getUrl) {
+        var str = '';
+        var infoDivId = (window.innerWidth > 800) ? 'info-overlay' : 'info-overlayfull';
+        $.ajax({
+            type: 'GET',
+            url: getUrl,
+            dataType: 'json',
+            success: function (data) {
+                str += '<div id="large-image-container" style="width: 100%; height: 35%; overflow: hidden;">';
+                str += '<img id="large-image" src="../LayoutIndex_Edit/images_Restaurant/' + $.trim(data[0].restaurantImages[0]) + '" alt="Large Image" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; margin: auto;">';
+                str += '</div>';
+                str += '<div style="padding: 20px;">';
+                var count = 0;
+                $.each(data, function (key, val) {
+                    $.each(val.restaurantImages, function (index, image) {
+                        var linkImage = "../LayoutIndex_Edit/images_Restaurant/" + $.trim(image);
+                        str += '<img src="' + linkImage + '" alt="Image ' + (index + 1) + '" style="width: 75px; height: 75px; object-fit: cover; margin-right: 5px;" onclick="changeLargeImage(\'' + linkImage + '\')">';
+                        count++;
+                        if (count >= 5) return false;
+                    });
+                    if (count >= 5) return false;
+                });
+                str += '<br><br>';
+                str += '<h3>' + $.trim(data[0].restaurantDetail.name) + '</h3>';
+                str += '<p>Address: ' + $.trim(data[0].restaurantDetail.address) + '</p>';
+                str += '<p>Opening Hours: ' + $.trim(data[0].restaurantDetail.openingHours) + '</p>';
+                str += '<p>Price: ' + $.trim(data[0].restaurantDetail.priceRange) + '</p>';
+                str += '<p style="text-align: justify">Description: ' + $.trim(data[0].restaurantDetail.description) + '</p>';
+                str += '</div>';
+
+                // Hiển thị nội dung được tạo vào div tương ứng
+                $('#' + infoDivId).html(str);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText)
+            }
+        });
+    }
+
+
+    //Historical Site
+    var historicalSites = [];
+
+    @foreach (var historicalSite in Model[0].historicalSiteDetails)
+    {
+        <text>
+                            var historicalSiteDetail = {
+            id: '@historicalSite.historicalSiteDetail.SiteId',
+            coordinates: [@historicalSite.historicalSiteDetail.Longitude, @historicalSite.historicalSiteDetail.Latitude]
+        };
+        historicalSites.push(historicalSiteDetail);
+        </text>
+    }
+
+        historicalSites.forEach(function (historicalSiteDetail) {
+            // Tạo một phần tử div để chứa hình ảnh
+            var customMarkerElement = document.createElement('div');
+            customMarkerElement.className = 'custom-marker';
+
+            var lng = historicalSiteDetail.coordinates[0];
+            var lat = historicalSiteDetail.coordinates[1];
+
+            // Thiết lập thuộc tính data-id, data-lng và data-lat cho customMarkerElement
+            customMarkerElement.setAttribute('data-id', historicalSiteDetail.id);
+            customMarkerElement.setAttribute('data-lng', lng);
+            customMarkerElement.setAttribute('data-lat', lat);
+
+            // Tạo một phần tử hình ảnh và thêm vào customMarkerElement
+            var imgElement = document.createElement('img');
+            imgElement.src = '../Marker_images/HistoricalSitePin.png'; // Thay đổi đường dẫn này thành đường dẫn thực tế của bạn
+            imgElement.className = 'marker-img';
+            customMarkerElement.appendChild(imgElement);
+
+            // Tạo marker với customMarkerElement
+            var marker = new mapboxgl.Marker(customMarkerElement)
+                .setLngLat([lng, lat])
+                .addTo(map);
+
+            // Chọn customMarkerElement bất kỳ trong historicalSite
+            customMarkerElement.addEventListener('click', function () {
+                var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/historicalsiteapi/" + historicalSiteDetail.id;
+                showHistoricalSiteByLatitudeAndLongtitude(getUrl);
+            });
+        });
+
+    function showHistoricalSiteByLatitudeAndLongtitude(getUrl) {
+        var str = '';
+        var infoDivId = (window.innerWidth > 800) ? 'info-overlay' : 'info-overlayfull';
+        $.ajax({
+            type: 'GET',
+            url: getUrl,
+            dataType: 'json',
+            success: function (data) {
+                str += '<div id="large-image-container" style="width: 100%; height: 35%; overflow: hidden;">';
+                str += '<img id="large-image" src="../LayoutIndex_Edit/images_Site/' + $.trim(data[0].historicalSiteImages[0]) + '" alt="Large Image" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; margin: auto;">';
+                str += '</div>';
+                str += '<div style="padding: 20px;">';
+                var count = 0;
+                $.each(data, function (key, val) {
+                    $.each(val.historicalSiteImages, function (index, image) {
+                        var linkImage = "../LayoutIndex_Edit/images_Site/" + $.trim(image);
+                        str += '<img src="' + linkImage + '" alt="Image ' + (index + 1) + '" style="width: 75px; height: 75px; object-fit: cover; margin-right: 5px;" onclick="changeLargeImage(\'' + linkImage + '\')">';
+                        count++;
+                        if (count >= 5) return false;
+                    });
+                    if (count >= 5) return false;
+                });
+                str += '<br><br>';
+                str += '<h3>' + $.trim(data[0].historicalSiteDetail.name) + '</h3>';
+                str += '<p>Address: ' + $.trim(data[0].historicalSiteDetail.address) + '</p>';
+                str += '<p>Opening Hours: ' + $.trim(data[0].historicalSiteDetail.openingHours) + '</p>';
+                str += '<p>Price: ' + $.trim(data[0].historicalSiteDetail.priceRange) + '</p>';
+                str += '<p style="text-align: justify">Description: ' + $.trim(data[0].historicalSiteDetail.description) + '</p>';
+                str += '</div>';
+
+                // Hiển thị nội dung được tạo vào div tương ứng
+                $('#' + infoDivId).html(str);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText)
+            }
+        });
+    }
+
+    //Landmark
+    var landMarks = [];
+
+    @foreach (var landMark in Model[0].landmarkDetails)
+    {
+        <text>
+                            var landMarkDetail = {
+            id: '@landMark.landmarkDetail.LandmarkId',
+            coordinates: [@landMark.landmarkDetail.Longitude, @landMark.landmarkDetail.Latitude]
+        };
+        landMarks.push(landMarkDetail);
+        </text>
+    }
+
+        landMarks.forEach(function (landmarkDetail) {
+            // Tạo một phần tử div để chứa hình ảnh
+            var customMarkerElement = document.createElement('div');
+            customMarkerElement.className = 'custom-marker';
+
+            var lng = landmarkDetail.coordinates[0];
+            var lat = landmarkDetail.coordinates[1];
+
+            // Thiết lập thuộc tính data-id, data-lng và data-lat cho customMarkerElement
+            customMarkerElement.setAttribute('data-id', landmarkDetail.id);
+            customMarkerElement.setAttribute('data-lng', lng);
+            customMarkerElement.setAttribute('data-lat', lat);
+
+            // Tạo một phần tử hình ảnh và thêm vào customMarkerElement
+            var imgElement = document.createElement('img');
+            imgElement.src = '../Marker_images/LandmarkPin.png'; // Thay đổi đường dẫn này thành đường dẫn thực tế của bạn
+            imgElement.className = 'marker-img';
+            customMarkerElement.appendChild(imgElement);
+
+            // Tạo marker với customMarkerElement
+            var marker = new mapboxgl.Marker(customMarkerElement)
+                .setLngLat([lng, lat])
+                .addTo(map);
+
+            // Chọn customMarkerElement bất kỳ trong landmarks
+            customMarkerElement.addEventListener('click', function () {
+                var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/landmarkapi/" + landmarkDetail.id;
+                showLandmarkByLatitudeAndLongtitude(getUrl);
+            });
+        });
+
+    function showLandmarkByLatitudeAndLongtitude(getUrl) {
+        var str = '';
+        var infoDivId = (window.innerWidth > 800) ? 'info-overlay' : 'info-overlayfull';
+        $.ajax({
+            type: 'GET',
+            url: getUrl,
+            dataType: 'json',
+            success: function (data) {
+                str += '<div id="large-image-container" style="width: 100%; height: 35%; overflow: hidden;">';
+                str += '<img id="large-image" src="../LayoutIndex_Edit/images_Landmark/' + $.trim(data[0].landmarkImages[0]) + '" alt="Large Image" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; margin: auto;">';
+                str += '</div>';
+                str += '<div style="padding: 20px;">';
+                var count = 0;
+                $.each(data, function (key, val) {
+                    $.each(val.landmarkImages, function (index, image) {
+                        var linkImage = "../LayoutIndex_Edit/images_Landmark/" + $.trim(image);
+                        str += '<img src="' + linkImage + '" alt="Image ' + (index + 1) + '" style="width: 75px; height: 75px; object-fit: cover; margin-right: 5px;" onclick="changeLargeImage(\'' + linkImage + '\')">';
+                        count++;
+                        if (count >= 5) return false;
+                    });
+                    if (count >= 5) return false;
+                });
+                str += '<br><br>';
+                str += '<h3>' + $.trim(data[0].landmarkDetail.name) + '</h3>';
+                str += '<p>Address: ' + $.trim(data[0].landmarkDetail.address) + '</p>';
+                str += '<p>Opening Hours: ' + $.trim(data[0].landmarkDetail.openingHours) + '</p>';
+                str += '<p>Price: ' + $.trim(data[0].landmarkDetail.priceRange) + '</p>';
+                str += '<p style="text-align: justify">Description: ' + $.trim(data[0].landmarkDetail.description) + '</p>';
+                str += '</div>';
+
+                // Hiển thị nội dung được tạo vào div tương ứng
+                $('#' + infoDivId).html(str);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText)
+            }
+        });
+    }
+
+    //Cultural Location
+    var culturalLocations = [];
+
+    @foreach (var culturalLocation in Model[0].cuturalLocationDetails)
+    {
+        <text>
+                            var culturalLocationDetail = {
+            id: '@culturalLocation.culturalLocationDetail.LocationId',
+            coordinates: [@culturalLocation.culturalLocationDetail.Longitude, @culturalLocation.culturalLocationDetail.Latitude]
+        };
+        culturalLocations.push(culturalLocationDetail);
+        </text>
+    }
+
+        culturalLocations.forEach(function (culturalLocationDetail) {
+            // Tạo một phần tử div để chứa hình ảnh
+            var customMarkerElement = document.createElement('div');
+            customMarkerElement.className = 'custom-marker';
+
+            var lng = culturalLocationDetail.coordinates[0];
+            var lat = culturalLocationDetail.coordinates[1];
+
+            // Thiết lập thuộc tính data-id, data-lng và data-lat cho customMarkerElement
+            customMarkerElement.setAttribute('data-id', culturalLocationDetail.id);
+            customMarkerElement.setAttribute('data-lng', lng);
+            customMarkerElement.setAttribute('data-lat', lat);
+
+            // Tạo một phần tử hình ảnh và thêm vào customMarkerElement
+            var imgElement = document.createElement('img');
+            imgElement.src = '../Marker_images/CuturalLocationPin.png'; // Thay đổi đường dẫn này thành đường dẫn thực tế của bạn
+            imgElement.className = 'marker-img';
+            customMarkerElement.appendChild(imgElement);
+
+            // Tạo marker với customMarkerElement
+            var marker = new mapboxgl.Marker(customMarkerElement)
+                .setLngLat([lng, lat])
+                .addTo(map);
+
+            // Chọn customMarkerElement bất kỳ trong culturalLocation
+            customMarkerElement.addEventListener('click', function () {
+                var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/culturallocationapi/" + culturalLocationDetail.id;
+                showCulturalLocationByLatitudeAndLongtitude(getUrl);
+            });
+        });
+
+
+    function showCulturalLocationByLatitudeAndLongtitude(getUrl) {
+        var str = '';
+        var infoDivId = (window.innerWidth > 800) ? 'info-overlay' : 'info-overlayfull';
+        $.ajax({
+            type: 'GET',
+            url: getUrl,
+            dataType: 'json',
+            success: function (data) {
+                str += '<div id="large-image-container" style="width: 100%; height: 35%; overflow: hidden;">';
+                str += '<img id="large-image" src="../LayoutIndex_Edit/images_CulturalLocation/' + $.trim(data[0].culturalLocationImages[0]) + '" alt="Large Image" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; margin: auto;">';
+                str += '</div>';
+                str += '<div style="padding: 20px;">';
+                var count = 0;
+                $.each(data, function (key, val) {
+                    $.each(val.culturalLocationImages, function (index, image) {
+                        var linkImage = "../LayoutIndex_Edit/images_CulturalLocation/" + $.trim(image);
+                        str += '<img src="' + linkImage + '" alt="Image ' + (index + 1) + '" style="width: 75px; height: 75px; object-fit: cover; margin-right: 5px;" onclick="changeLargeImage(\'' + linkImage + '\')">';
+                        count++;
+                        if (count >= 5) return false;
+                    });
+                    if (count >= 5) return false;
+                });
+                str += '<br><br>';
+                str += '<h3>' + $.trim(data[0].culturalLocationDetail.name) + '</h3>';
+                str += '<p>Address: ' + $.trim(data[0].culturalLocationDetail.address) + '</p>';
+                str += '<p>Opening Hours: ' + $.trim(data[0].culturalLocationDetail.openingHours) + '</p>';
+                str += '<p>Price: ' + $.trim(data[0].culturalLocationDetail.priceRange) + '</p>';
+                str += '<p style="text-align: justify">Description: ' + $.trim(data[0].culturalLocationDetail.description) + '</p>';
+                str += '</div>';
+
+                // Hiển thị nội dung được tạo vào div tương ứng
+                $('#' + infoDivId).html(str);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText)
+            }
+        });
+    }
+
+    function changeLargeImage(imageSrc) {
+        $('#info-overlay, #info-overlayfull').find('#large-image').attr('src', imageSrc);
+    }
+
+    //nhấn đúp chuột để lấy 1 vị trí bất kì
+    map.on('dblclick', function (e) {
+
+        //thêm mapbox direction
+        map.addControl(
+            new MapboxDirections({
+                accessToken: mapboxgl.accessToken
+            }),
+            'top-right'
+        );
+    });
+
+    //tạo scale cho bản đồ
+    var scale = new mapboxgl.ScaleControl({
+        maxWidth: 80,
+        unit: 'imperial'
+    });
+    map.addControl(scale);
+    scale.setUnit('metric');
+
+    //tạo nút full screen cho bản đồ
+    map.addControl(new mapboxgl.FullscreenControl());
+
+    //chèn navigation control vào bản đồ
+    map.addControl(new mapboxgl.NavigationControl({
+        showCompass: true,
+        showZoom: true,
+
+    }));
+
+    //search map
+
+    $(function () {
+        $("#txtAttraction").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    // Đường dẫn URL gọi đến hàm AutoCompleteAttraction
+                    url: '/Home/AutoCompleteAttraction/',
+                    data: { "searchText": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return item;
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText)
+                    },
+                    failure: function (response) {
+                        alert(response.responseText)
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#hfAttraction").val(i.item.val);
+            },
+            minLength: 2
+        });
+    });
+
+    $(function () {
+        $("#txtAttraction").on('input', function () {
+            $("#errorMessageMap").hide();
+        });
+
+        $("#formAttraction").submit(function (e) {
+            e.preventDefault();
+
+            var searchText = $("#txtAttraction").val();
+
+            $.ajax({
+                url: '/Home/CheckAttractionExistence',
+                data: { "attractionName": searchText },
+                type: "POST",
+                success: function (data) {
+                    if (data.exists) {
+                        //thực hiện zoom vào vị trí của địa điểm
+                        map.flyTo({
+                            center: [data.longtitude, data.latitude],
+                            zoom: 18 // Zoom level bạn muốn áp dụng khi nhấn nút
+                        });
+                        //hiển thị thông tin chi tiết của địa điểm
+                        if (data.typeOfAttraction == "restaurant") {
+                            var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/restaurantapi/" + data.attractionId;
+                            showRestaurantByLatitudeAndLongtitude(getUrl);
+                        }
+                        if (data.typeOfAttraction == "historicalSite") {
+                            var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/historicalsiteapi/" + data.attractionId;
+                            showHistoricalSiteByLatitudeAndLongtitude(getUrl);
+                        }
+                        if (data.typeOfAttraction == "culturalLocation") {
+                            var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/culturallocationapi/" + data.attractionId;
+                            showCulturalLocationByLatitudeAndLongtitude(getUrl);
+                        }
+                        if (data.typeOfAttraction == "landmark") {
+                            var getUrl = "https://hanoitourismutcweb.azurewebsites.net/api/landmarkapi/" + data.attractionId;
+                            showLandmarkByLatitudeAndLongtitude(getUrl);
+                        }
+                    }
+                    else {
+                        $("#errorMessageMap").text('Please select an attraction from the suggestion list').show();
+                    }
+                },
+
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>

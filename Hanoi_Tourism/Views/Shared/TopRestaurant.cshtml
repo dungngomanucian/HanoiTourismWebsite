@@ -1,0 +1,75 @@
+﻿@using Hanoi_Tourism.ViewModels
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<HomeStreetListViewModel>
+
+<style>
+    .topAttraction{
+        width: 500px;
+        height: 300px;
+    }
+
+    .packages-price{
+        text-align: center
+    }
+
+    .description-container {
+        text-align: center;
+        max-height: 120px; /* Thiết lập chiều cao tối đa */
+        overflow-y: hidden; /* Ẩn thanh cuộn dọc */
+        transition: overflow-y 0.5s ease; /* Áp dụng hiệu ứng transition cho overflow-y */
+    }
+
+    .scroll-active {
+        overflow-y: auto; /* Hiển thị thanh cuộn dọc khi hover */
+    }
+</style>
+
+<div class="packages-carousel owl-carousel">
+    @foreach(var item in Model[0].topRestaurants)
+    {
+        <div class="packages-item">
+            <div class="packages-img">
+                <img src="@Url.Content("../LayoutIndex_Edit/images_Restaurant/" + item.restaurantImages[0])" class="img-fluid w-100 rounded-top topAttraction" alt="Image">
+                <div class="packages-info d-flex border border-start-0 border-end-0 position-absolute" style="width: 100%; bottom: 0; left: 0; z-index: 5;">
+                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-map-marker-alt me-2"></i>@item.restaurant.Address</small>
+                    @* <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i>3 days</small> *@
+                    @* <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i>2 Person</small> *@
+                </div>
+                @* <div class="packages-price py-2 px-6">Sales 10%</div> *@
+            </div>
+            <div class="packages-content bg-light">
+                <div class="p-4 pb-0">
+                    <h5 class="mb-0">@item.restaurant.Name</h5>
+                    <small class="text-uppercase">Restaurant</small>
+                    <div class="mb-3">
+                        @for(int i=0; i<item.restaurantStars; i++)
+                        {
+                            <small class="fa fa-star text-primary"></small>
+                        }
+                    </div>
+                    <div class="description-container mb-4" onmouseover="showScrollBar(this)" onmouseout="hideScrollBar(this)">
+                        <p class="mb-0">@item.restaurant.Description</p>
+                    </div>
+                </div>
+                <div class="row bg-primary rounded-bottom mx-0">
+                    <div class="col-6 text-start px-0">
+                        <a asp-controller="Home" asp-action="RestaurantDetail" asp-route-resID="@item.restaurant.RestaurantId" class="btn-hover btn text-white py-2 px-4">View Details <i class="fa fa-arrow-right ms-2"></i></a>
+                    </div>
+                    <div class="col-6 text-end px-0">
+                        <a href="#" class="btn-hover btn text-white py-2 px-4">Book Now <i class="fa fa-calendar-alt me-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    } 
+</div>
+
+<script>
+    function showScrollBar(element) {
+        element.classList.add('scroll-active'); // Thêm lớp CSS khi di chuột vào
+    }
+
+    function hideScrollBar(element) {
+        element.classList.remove('scroll-active'); // Loại bỏ lớp CSS khi di chuột ra
+    }
+</script>

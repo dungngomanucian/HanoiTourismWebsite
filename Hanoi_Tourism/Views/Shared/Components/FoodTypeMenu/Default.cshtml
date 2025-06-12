@@ -1,0 +1,10 @@
+﻿@model IEnumerable<TFoodType>
+<div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Food Types</a>
+    <div class="dropdown-menu m-0">
+        @foreach (var item in Model)
+        {
+            <a asp-controller="Home" asp-action="FoodTypeRestaurantFromMenu" asp-route-FoodTypeId="@item.FoodTypeId" class="dropdown-item">@item.TypeName</a>
+        }
+    </div>
+</div>

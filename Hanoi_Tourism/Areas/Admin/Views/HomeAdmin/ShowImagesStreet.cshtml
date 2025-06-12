@@ -1,0 +1,129 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Hanoi_Tourism.Models;
+@model List<TStreetImage>
+
+@{
+    ViewData["Title"] = "ShowImages";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>@ViewBag.Name Street    </h1>
+
+<div class="container">
+    <input type="file" multiple class="form-control mb-4" data-street-id="@ViewBag.ID" />
+    <div class="preview"></div>
+    <button id="addImageBtn" class="btn btn-primary">Add</button>
+</div>
+<br />
+<div class="image-container">
+    @foreach (var item in Model)
+    {
+        <div class="image-wrapper">
+            <img src="@Url.Content("../../LayoutIndex_Edit/images_Street/"+item.ImageUrl)" alt="Street Image">
+            <i class="delete-icon fa fa-trash" data-img-id="@item.ImageId" data-image-url="@Url.Content("../../LayoutIndex_Edit/images_Street/" + item.ImageUrl)"></i>
+            <p>@item.ImageUrl</p>
+        </div>
+    }
+</div>
+
+<style>
+    .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between; /* Đảm bảo các ảnh sẽ căn lề trái và phải */
+    }
+
+        .image-container img {
+            width: 230px;
+            height: 230px;
+            margin-bottom: 10px; /* Đặt margin dưới cho mỗi ảnh */
+        }
+
+
+
+
+    .image-wrapper {
+        position: relative;
+        display: inline-block;
+        text-align: center; /* Căn giữa ảnh và biểu tượng */
+    }
+
+    .delete-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Để căn giữa biểu tượng */
+        color: #fff; /* Màu xám */
+        font-size: 50px; /* Phóng to biểu tượng */
+        opacity: 0.5; /* Làm mờ biểu tượng */
+        cursor: pointer; /* Thêm hiệu ứng con trỏ khi di chuột vào */
+        transition: opacity 0.3s ease; /* Hiệu ứng mờ */
+    }
+
+        .delete-icon:hover {
+            opacity: 1; /* Biểu tượng sẽ không còn mờ khi di chuột vào */
+        }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lặp qua tất cả các phần tử có class là 'delete-icon'
+        document.querySelectorAll('.delete-icon').forEach(function (icon) {
+            // Gắn sự kiện click cho mỗi biểu tượng xoá
+            icon.addEventListener('click', function () {
+                var imageId = this.getAttribute('data-img-id');
+                var imageUrl = this.getAttribute('data-image-url');
+                if (confirm('Bạn có chắc chắn muốn xoá ảnh này không?')) {
+                    // Sử dụng Url.Action để tạo đường dẫn hành động
+                    var url = '@Url.Action("DeleteImagesStreet", "HomeAdmin")' + '?imgId=' + imageId + '&imgUrl=' + encodeURIComponent(imageUrl);
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+
+
+    //upload ảnh
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lắng nghe sự kiện click trên nút "Add"
+        document.getElementById('addImageBtn').addEventListener('click', function () {
+            const ipnFileElement = document.querySelector('input[type="file"]');
+            const files = ipnFileElement.files;
+            if (files.length === 0) {
+                alert('Please select an image file first.');
+                return;
+            }
+
+            const file = files[0];
+            const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+            const fileType = file['type'];
+
+            if (!validImageTypes.includes(fileType)) {
+                alert('Please select a valid image file (GIF, JPEG, or PNG).');
+                return;
+            }
+
+            const streetId = ipnFileElement.dataset.streetId;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('streetId', streetId);
+
+            fetch('/HomeAdminController/UploadNewImage', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Xử lý phản hồi từ server (nếu cần)
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+
+
+
+</script>

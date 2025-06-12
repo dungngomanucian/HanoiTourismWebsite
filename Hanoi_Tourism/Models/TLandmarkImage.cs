@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Hanoi_Tourism.Models;
+
+public partial class TLandmarkImage
+{
+    public string ImageId { get; set; } = null!;
+
+    public string LandmarkId { get; set; } = null!;
+
+    public string? ImageUrl { get; set; }
+
+    public virtual TLandmark Landmark { get; set; } = null!;
+}

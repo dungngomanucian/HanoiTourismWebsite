@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "StreetDetail";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+@model Hanoi_Tourism.ViewModels.HomeStreetDetailViewModel
+<style>
+    p.truncate {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; /* hiển thị dấu ... khi văn bản bị cắt */
+        max-width: 50px; /* Điều chỉnh chiều rộng tối đa cần thiết */
+    }
+</style>
+
+<div class="container-fluid destination py-0">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Destination</h5>
+            <h1 class="mb-0">Popular Cultural Locations</h1>
+        </div>
+        <div class="tab-class text-center">
+
+            <div class="container-fluid blog py-0">
+                <div class="row g-4 justify-content-center">
+                    @foreach (var item in Model.culturalLocations)
+                    {
+                        <div class="col-lg-4 col-md-6 cultural-location">
+                            <div class="blog-item">
+                                <div class="blog-img">
+                                    <div class="blog-img-inner">
+                                        @if (item.culturalLocationImages.Count() == 0)
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_CulturalLocation/" + "")" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid w-100 rounded-top" src="@Url.Content("../LayoutIndex_Edit/images_CulturalLocation/" + item.culturalLocationImages[0].ImageUrl)" style="width:336px; height:269px" alt="Image">
+                                        }
+                                        <div class="blog-icon">
+                                            <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
+                                        @if (item.culturalLocationReviews.Count() == 0)
+                                        {
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>No reviews yet</small>
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>0 stars</a>
+                                        }
+                                        else
+                                        {
+                                            string dateTimeString = @item.culturalLocationReviews.Last().Date.ToString();
+                                            string[] parts = dateTimeString.Split(' ');
+                                            string datePart = parts[0];
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>@datePart</small>
+                                            int? starSum = 0;
+                                            foreach (var review in item.culturalLocationReviews)
+                                            {
+                                                starSum += review.Rating;
+                                            }
+                                            float? starAverage = starSum / item.culturalLocationReviews.Count();
+                                            <a href="#" class="btn-hover flex-fill text-center text-white border-end py-2"><i class="fa fa-thumbs-up text-primary me-2"></i>@starAverage.ToString() stars</a>
+                                        }
+                                        <a href="#" class="btn-hover flex-fill text-center text-white py-2"><i class="fa fa-comments text-primary me-2"></i>@item.culturalLocationReviews.Count()</a>
+                                    </div>
+                                </div>
+                                <div class="blog-content border border-top-0 rounded-bottom p-4" style="height: 300px">
+                                    <p class="mb-3">Open: @item.culturalLocation.OpeningHours</p>
+                                    <a href="#" class="h4">@item.culturalLocation.Name</a>
+                                    <p class="my-3">@item.culturalLocation.Address</p>
+                                    <a asp-controller="Home" asp-action="CulturalLocationDetail" asp-route-culID="@item.culturalLocation.LocationId" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // When a tab is clicked
+        $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+
+            // If the tab is "All"
+            if (target === "#tab-1") {
+                // Display all lists
+                $('.historical-site').show();
+                $('.landmark').show();
+                $('.cultural-location').show();
+                $('.restaurant').show();
+            }
+
+            // If the tab is "Historcal Sites"
+            else if (target == '#tab-2') {
+                // Hide other lists
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Historical Sites list
+                $('.historical-site').show();
+            }
+
+            // If the tab is "Landmark"
+            else if (target == '#tab-3') {
+                // Hide all the current items
+                $('.historical-site').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Landmarks list
+                $('.landmark').show();
+            }
+
+            // If the tab is "Cultural Locations"
+            else if (target == '#tab-4') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.restaurant').hide();
+                // Display Cultural Locations list
+                $('.cultural-location').show();
+            }
+
+            // If the tab is "Restaurants"
+            else if (target == '#tab-5') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                // Display Restaurants list
+                $('.restaurant').show();
+            }
+        });
+    });
+</script>

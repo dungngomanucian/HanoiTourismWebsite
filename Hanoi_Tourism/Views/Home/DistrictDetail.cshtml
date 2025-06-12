@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "StreetDetail";
+    Layout = "~/Views/Shared/_LayoutIndex.cshtml";
+}
+
+@model Hanoi_Tourism.ViewModels.MenuDistrictStreetDetailViewModel
+<style>
+    p.truncate {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; /* hiển thị dấu ... khi văn bản bị cắt */
+        max-width: 50px; /* Điều chỉnh chiều rộng tối đa cần thiết */
+    }
+</style>
+
+<div class="container-fluid about py-0">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5">
+                <h1 class="mb-4">Welcome to <span class="text-primary">@Model.district.Name</span></h1>
+                <div class="h-100" style="border: 50px solid; border-color: transparent #13357B transparent #13357B;">
+                    <img src="@Url.Content("../LayoutIndex_Edit/images_District/" + Model.district.ImageUrl)" class="img-fluid w-100 h-100" alt="">
+                </div>
+            </div>
+            <div class="col-lg-7" style="background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .8)), url(../1LayoutTravel/img/about-img-1.png);">
+                <h5 class="section-about-title pe-3">About @Model.district.Name</h5>
+                <p class="mb-4" style="text-align: justify">@Model.district.Description</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid destination py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Destination</h5>
+            <h1 class="mb-0">Streets of District</h1>
+        </div>
+        <div class="tab-class text-center">
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane fade show p-0 active">
+                    <div class="row g-4">
+                        <div class="col-xl-12" style="clear: both">
+                            <div class="row g-4">
+                                @foreach(var item in Model.streetListViewModels)
+                                {
+                                    <div class="col-lg-4">
+                                        <div class="destination-img">
+                                            <img style="width: 500px; height: 350px; loading: lazy" class="img-fluid rounded w-100" src="@Url.Content("../LayoutIndex_Edit/images_Street/" + item.streetImages[0].ImageUrl)" alt="districtImages">
+                                            <div class="destination-overlay p-4" style="text-align:left">
+                                                <h4 class="text-white mb-2 mt-3">@item.street.Name</h4>
+                                                <a asp-controller="Home" asp-action="StreetDetail" asp-route-StreetID="@item.street.StreetId" class="btn-hover text-white">See Details <i class="fa fa-arrow-right ms-2"></i></a>
+                                            </div>
+                                            <div class="search-icon">
+                                                <a href="@Url.Content("../LayoutIndex_Edit/images_Street/" + item.streetImages[0].ImageUrl)" data-lightbox="destination-1"><i class="fa fa-plus-square fa-1x btn btn-light btn-lg-square text-primary"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // When a tab is clicked
+        $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+
+            // If the tab is "All"
+            if (target === "#tab-1") {
+                // Display all lists
+                $('.historical-site').show();
+                $('.landmark').show();
+                $('.cultural-location').show();
+                $('.restaurant').show();
+            }
+
+            // If the tab is "Historcal Sites"
+            else if (target == '#tab-2') {
+                // Hide other lists
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Historical Sites list
+                $('.historical-site').show();
+            }
+
+            // If the tab is "Landmark"
+            else if (target == '#tab-3') {
+                // Hide all the current items
+                $('.historical-site').hide();
+                $('.cultural-location').hide();
+                $('.restaurant').hide();
+                // Display Landmarks list
+                $('.landmark').show();
+            }
+
+            // If the tab is "Cultural Locations"
+            else if (target == '#tab-4') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.restaurant').hide();
+                // Display Cultural Locations list
+                $('.cultural-location').show();
+            }
+
+            // If the tab is "Restaurants"
+            else if (target == '#tab-5') {
+                // Hide other lists
+                $('.historical-site').hide();
+                $('.landmark').hide();
+                $('.cultural-location').hide();
+                // Display Restaurants list
+                $('.restaurant').show();
+            }
+        });
+    });
+</script>
+
+

@@ -1,6 +1,6 @@
 # HanoiTourismWebsite
 
-Ứng dụng web hỗ trợ người dùng khám phá, tìm hiểu các địa điểm nổi tiếng ở Hà Nội, tự động gợi ý địa điểm gần vị trí hiện tại
+Ứng dụng web hỗ trợ người dùng khám phá, tìm hiểu các địa điểm nổi tiếng ở Hà Nội, tự động gợi ý địa điểm gần vị trí hiện tại.
 
 ---
 
